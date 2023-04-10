@@ -35,4 +35,4 @@ blog_app-*.tar
 npm-debug.log
 /assets/node_modules/
 
-uploads/
+/priv/static/images/live*

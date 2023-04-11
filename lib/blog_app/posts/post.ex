@@ -1,11 +1,13 @@
 defmodule BlogApp.Posts.Post do
   use Ecto.Schema
+  use Waffle.Ecto.Schema
+
   import Ecto.Changeset
 
   schema "posts" do
-    field :body, :integer
-    field :image, :string
     field :title, :string
+    field :body, :string
+    field :image, BlogApp.Uploaders.ImageUploader.Type
 
     timestamps()
   end
@@ -13,7 +15,8 @@ defmodule BlogApp.Posts.Post do
   @doc false
   def changeset(post, attrs) do
     post
-    |> cast(attrs, [:title, :body, :image])
-    |> validate_required([:title, :body, :image])
+    |> cast(attrs, [:title, :body])
+    |> cast_attachments(attrs, [:image], allow_paths: true)
+    |> validate_required([:title, :body])
   end
 end

@@ -11,7 +11,10 @@
 <.list>
   <:item title="Title"><%= @post.title %></:item>
   <:item title="Body"><%= @post.body %></:item>
-  <:item title="Image"><%= @post.image %></:item>
+  <:item title="Image">
+    <!-- Display the Post image using the Waffle URL -->
+    <img src={@post_image_url} />
+  </:item>
 </.list>
 
 <.back navigate={~p"/posts"}>Back to posts</.back>

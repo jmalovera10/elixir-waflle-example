@@ -20,14 +20,21 @@ defmodule BlogAppWeb.PostLive.FormComponent do
         phx-submit="save"
       >
         <.input field={@form[:title]} type="text" label="Title" />
-        <.input field={@form[:body]} type="number" label="Body" />
-        <.input field={@form[:image]} type="text" label="Image" />
+        <.input field={@form[:body]} type="text" label="Body" />
+        <.live_file_input upload={@uploads[:image]} />
         <:actions>
           <.button phx-disable-with="Saving...">Save Post</.button>
         </:actions>
       </.simple_form>
     </div>
     """
+  end
+
+  @impl true
+  def mount(socket) do
+    {:ok,
+     socket
+     |> allow_upload(:image, accept: ~w(.jpg .jpeg .png))}
   end
 
   @impl true
@@ -51,7 +58,15 @@ defmodule BlogAppWeb.PostLive.FormComponent do
   end
 
   def handle_event("save", %{"post" => post_params}, socket) do
-    save_post(socket, socket.assigns.action, post_params)
+    [file_path] =
+      consume_uploaded_entries(socket, :image, fn %{path: path}, entry ->
+        # Add the file extension to the temp file
+        path_with_extension = path <> String.replace(entry.client_type, "image/", ".")
+        File.cp!(path, path_with_extension)
+        {:ok, path_with_extension}
+      end)
+
+    save_post(socket, socket.assigns.action, Map.put(post_params, "image", file_path))
   end
 
   defp save_post(socket, :edit, post_params) do

@@ -4,7 +4,7 @@ defmodule BlogApp.Repo.Migrations.CreatePosts do
   def change do
     create table(:posts) do
       add :title, :string
-      add :body, :integer
+      add :body, :string
       add :image, :string
 
       timestamps()
